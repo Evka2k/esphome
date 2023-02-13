@@ -27,6 +27,9 @@ class TuyaCover : public cover::Cover, public Component {
   void set_invert_position(bool invert_position) { invert_position_ = invert_position; }
   void set_invert_position_report(bool invert_position_report) { invert_position_report_ = invert_position_report; }
   void set_restore_mode(TuyaCoverRestoreMode restore_mode) { restore_mode_ = restore_mode; }
+  void set_command_open(uint8_t value) { command_open_ = value; }
+  void set_command_close(uint8_t value) { command_close_ = value; }
+  void set_command_stop(uint8_t value) { command_stop_ = value; }
 
  protected:
   void control(const cover::CoverCall &call) override;
@@ -44,6 +47,9 @@ class TuyaCover : public cover::Cover, public Component {
   uint32_t value_range_;
   bool invert_position_;
   bool invert_position_report_;
+  uint8_t command_open_;
+  uint8_t command_close_;
+  uint8_t command_stop_;
 };
 
 }  // namespace tuya

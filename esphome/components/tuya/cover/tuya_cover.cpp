@@ -4,10 +4,6 @@
 namespace esphome {
 namespace tuya {
 
-const uint8_t COMMAND_OPEN = 0x00;
-const uint8_t COMMAND_CLOSE = 0x02;
-const uint8_t COMMAND_STOP = 0x01;
-
 using namespace esphome::cover;
 
 static const char *const TAG = "tuya.cover";
@@ -59,7 +55,7 @@ void TuyaCover::setup() {
 void TuyaCover::control(const cover::CoverCall &call) {
   if (call.get_stop()) {
     if (this->control_id_.has_value()) {
-      this->parent_->force_set_enum_datapoint_value(*this->control_id_, COMMAND_STOP);
+      this->parent_->force_set_enum_datapoint_value(*this->control_id_, this->command_stop_);
     } else {
       auto pos = this->position;
       pos = this->invert_position_report_ ? pos : 1.0f - pos;
@@ -73,9 +69,9 @@ void TuyaCover::control(const cover::CoverCall &call) {
     auto pos = *call.get_position();
     if (this->control_id_.has_value() && (pos == COVER_OPEN || pos == COVER_CLOSED)) {
       if (pos == COVER_OPEN) {
-        this->parent_->force_set_enum_datapoint_value(*this->control_id_, COMMAND_OPEN);
+        this->parent_->force_set_enum_datapoint_value(*this->control_id_, this->command_open_);
       } else {
-        this->parent_->force_set_enum_datapoint_value(*this->control_id_, COMMAND_CLOSE);
+        this->parent_->force_set_enum_datapoint_value(*this->control_id_, this->command_close_);
       }
     } else {
       pos = this->invert_position_report_ ? pos : 1.0f - pos;
@@ -127,6 +123,9 @@ void TuyaCover::dump_config() {
   if (this->position_report_id_.has_value()) {
     ESP_LOGCONFIG(TAG, "   Position Report has datapoint ID %u", *this->position_report_id_);
   }
+  ESP_LOGCONFIG(TAG, "   Open command value 0x%02u", this->command_open_);
+  ESP_LOGCONFIG(TAG, "   Close command value 0x%02u", this->command_close_);
+  ESP_LOGCONFIG(TAG, "   Stop command value 0x%02u", this->command_stop_);
 }
 
 cover::CoverTraits TuyaCover::get_traits() {
