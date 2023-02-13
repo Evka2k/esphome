@@ -17,6 +17,9 @@ CONF_POSITION_DATAPOINT = "position_datapoint"
 CONF_POSITION_REPORT_DATAPOINT = "position_report_datapoint"
 CONF_INVERT_POSITION = "invert_position"
 CONF_INVERT_POSITION_REPORT = "invert_position_report"
+CONF_COMMAND_OPEN = "command_open"
+CONF_COMMAND_CLOSE = "command_close"
+CONF_COMMAND_STOP = "command_stop"
 
 TuyaCover = tuya_ns.class_("TuyaCover", cover.Cover, cg.Component)
 
@@ -52,6 +55,9 @@ CONFIG_SCHEMA = cv.All(
             cv.Optional(CONF_RESTORE_MODE, default="RESTORE"): cv.enum(
                 RESTORE_MODES, upper=True
             ),
+            cv.Optional(CONF_COMMAND_OPEN, default=0x00): cv.uint8_t,
+            cv.Optional(CONF_COMMAND_CLOSE, default=0x02): cv.uint8_t,
+            cv.Optional(CONF_COMMAND_STOP, default=0x01): cv.uint8_t,
         },
     ).extend(cv.COMPONENT_SCHEMA),
     validate_range,
@@ -75,5 +81,8 @@ async def to_code(config):
     cg.add(var.set_invert_position(config[CONF_INVERT_POSITION]))
     cg.add(var.set_invert_position_report(config[CONF_INVERT_POSITION_REPORT]))
     cg.add(var.set_restore_mode(config[CONF_RESTORE_MODE]))
+    cg.add(var.set_command_open(config[CONF_COMMAND_OPEN]))
+    cg.add(var.set_command_close(config[CONF_COMMAND_CLOSE]))
+    cg.add(var.set_command_stop(config[CONF_COMMAND_STOP]))
     paren = await cg.get_variable(config[CONF_TUYA_ID])
     cg.add(var.set_tuya_parent(paren))
